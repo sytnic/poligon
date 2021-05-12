@@ -14,6 +14,7 @@ use Faker\Generator as Faker;
 |
 */
 
+// Для этого класса (App\User) вызывается эта функция (function(Faker $faker))
 $factory->define(App\User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,

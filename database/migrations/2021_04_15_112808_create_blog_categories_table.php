@@ -15,7 +15,7 @@ class CreateBlogCategoriesTable extends Migration
     {
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('parent_id')->unsigned()->default(0);
+            $table->integer('parent_id')->unsigned()->default(1);
 
             $table->string('slug')->unique();
             $table->string('title');
@@ -23,6 +23,7 @@ class CreateBlogCategoriesTable extends Migration
 
             $table->timestamps();  // columns: created_at, updated_at 
             $table->softDeletes(); // columns: deleted_at
+                // see columns: \vendor\laravel\framework\src\Illuminate\Database\Schema\Blueprint.php
         });
     }
 

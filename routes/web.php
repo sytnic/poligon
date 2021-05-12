@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// чтобы не указывать отдельно get, post , delete.. для маршрутов, 
+//   можно указать одной строкой:
+// указываются uri, controller, имя маршрута names
+Route::resource('rest', 'RestTestController')->names('restTest');
+// ->names('restTest'); имя маршрута можно не задавать
