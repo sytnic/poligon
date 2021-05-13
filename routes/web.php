@@ -20,3 +20,12 @@ Route::get('/', function () {
 // указываются uri, controller, имя маршрута names
 Route::resource('rest', 'RestTestController')->names('restTest');
 // ->names('restTest'); имя маршрута можно не задавать
+
+Route::group(['namespace'=>'Blog','prefix'=>'blog'], function(){
+    Route::resource('posts', 'PostController')->names('blog.posts');
+});
+// для отображения индексного маршрута будет работать /blog/posts/ в адресной строке браузера
+// Префикс и namespace можно было указать и так
+/*
+    Route::resource('blog/posts', 'Blog/PostController')->names('blog.posts');
+*/
