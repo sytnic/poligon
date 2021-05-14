@@ -126,13 +126,36 @@ php artisan make:controller Blog/PostController --resource
     https://laravel.com/docs/5.7/authentication
 
     Создание базовых файлов
-php artisan make::auth
+php artisan make:auth
 
     Запуск миграции
 php artisan migrate
 
     Тестирование
 http://poligon.local/register
+
+
+    Как подключается контент в layout-файлах
+(Комментарии <!-- --> в  layout-файлах сломают приложение)
+    В \resources\views\layouts\app.blade.php   
+    в тегах контента 
+        <main class="py-4">
+            @yield('content')
+        </main>
+    подключается контент, 
+    в других layout-файлах контент в @yield('content') подключается так
+            @extends('layouts.app')
+            @section('content')
+                <div> ... </div>
+            @endsection            
+    
+
+
+
+
+
+
+            
 
 
 
