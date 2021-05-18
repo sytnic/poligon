@@ -105,6 +105,8 @@ php artisan make:controller RestTestController --resource
 
     Список всех существующих маршрутов
 php artisan route:list
+    создать список в отдельном файле в текущей папке
+php artisan route:list > routes.txt
 
 --------------------
 9.
@@ -113,15 +115,15 @@ php artisan route:list
     Базовый (родительский) контроллер блога (на всякий случай)   
     "Blog/" создаст подпапку Blog в app/Http/Controllers
 php artisan make:controller Blog/BaseController
-     Для "родительности" в нём допишем abstract,
-    в других контроллерах в Blog/ перепеписываем по умолчанию extends Controller
+     Для "родительности" в нём допишем abstract
+    и в других контроллерах в Blog/ перепеписываем по умолчанию extends Controller
     на extends BaseController
 
     Контроллер статей блога
 php artisan make:controller Blog/PostController --resource
 
 --------------------
-10.
+11.
     Аутентификация 
     https://laravel.com/docs/5.7/authentication
 
@@ -131,7 +133,7 @@ php artisan make:auth
     Запуск миграции
 php artisan migrate
 
-    Тестирование
+    Проверка
 http://poligon.local/register
 
 
@@ -148,7 +150,20 @@ http://poligon.local/register
             @section('content')
                 <div> ... </div>
             @endsection            
-    
+
+ --------------------
+12.
+
+    Создание контроллера,
+    будет создана подпапка Admin/ в ней контроллер
+php artisan make:controller Blog/Admin/CategoryController --resource
+
+    Создание маршрутов вручную в файле в web.php
+Route::resource('categories', 'CategoryController')
+  ->only($methods)
+  ->names('blog.admin.categories');
+
+
 
 
 
