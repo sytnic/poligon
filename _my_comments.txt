@@ -137,19 +137,34 @@ php artisan migrate
 http://poligon.local/register
 
 
-    Как подключается контент в layout-файлах
-(Комментарии <!-- --> в  layout-файлах сломают приложение)
+    Как подключается контент в blade-файлах
+
+    Комментарии <!-- --> в  blade-файлах сломают приложение
+    {{-- правильный комментарий в blade-файлах --}}
+
     В \resources\views\layouts\app.blade.php   
     в тегах контента 
         <main class="py-4">
             @yield('content')
         </main>
-    подключается контент, 
-    в других layout-файлах контент в @yield('content') подключается так
+    будет подключаться будущий контент, он
+    в других blade-файлах подключается так
             @extends('layouts.app')
             @section('content')
                 <div> ... </div>
             @endsection            
+
+    функции 
+    @foreach ... @endforeach 
+    @if ... @endif
+    являются blade-функциями
+
+    такая строчка
+        @php /** @var \App\Models\BlogCategory $item */ @endphp
+    создаётся для phpstorm, чтобы $item стала кликабельной
+    и вела к ее определению в проекте.
+
+
 
  --------------------
 12.
@@ -162,6 +177,15 @@ php artisan make:controller Blog/Admin/CategoryController --resource
 Route::resource('categories', 'CategoryController')
   ->only($methods)
   ->names('blog.admin.categories');
+
+ --------------------
+14.
+    Пагинация    
+
+    Заполняются (вручную) пустые методы в CategoryController,
+    файлы view и папки под них содаются вручную в resources/views/ .
+    Согласно маршрутам вот такой вызов /admin/blog/categories/ .
+
 
 
 
