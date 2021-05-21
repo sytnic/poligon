@@ -1,0 +1,219 @@
+
+    Команда устанавливает в текущую папку последнюю версию laravel
+      Должен быть установлен composer
+composer create-project --prefer-dist laravel/laravel
+	
+    Устанавливает в папку blog версию 5.7
+        В текущую папку версию 5.7 не устанавливает, нужно указать папку
+composer create-project --prefer-dist laravel/laravel blog "5.7.*"
+
+    Разрешения для папок
+sudo chmod 777 -R storage && sudo chmod 777 -R bootstrap/cache
+
+    Vagrant и VirtualBox жестко привязывают права к общей с Windows папке и ее вложенностям. 
+Поменять права вряд ли удастся.
+
+    При ошибке установки  barryvdh/laravel-debugbar на Laravel 5.7.29 встала версия 3,0 
+composer require barryvdh/laravel-debugbar:~3.0 --dev
+
+---
+    Обязательно должен быть файл .env. Отключается в gitignore. Настройки соединения с БД и др.
+
+    Debugbar включается/отключается в файле .env
+APP_DEBUG=true
+    или
+APP_DEBUG=false
+
+    Возможно еще нужен  barryvdh/laravel-ide-helper
+    Бокс под Laravel -  vagrant box add laravel/homestead
+
+--------------------
+3.
+---
+    Для Maria DB и др. нужно будет прописать следующие строки
+    в AppServiceProvider,
+    описание здесь: Index Lengths & MySQL / MariaDB
+    https://laravel.com/docs/5.7/migrations#indexes :
+
+  use Illuminate\Support\Facades\Schema;
+  public function boot()
+{
+    Schema::defaultStringLength(191);
+}
+---
+
+    Создание пустой схемы (базы данных) `poligon` в Workbench.
+CREATE SCHEMA `poligon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+    Создание моделей в папкке app/Models c соответсвующими им миграциями
+php artisan make:model Models/BlogCategory -m
+    т.е. автоматически создастся Модель, папка Models и 
+    миграция в database/migration/ (создающая структуру таблицы),
+    которую можно внутри донастроить вручную.
+
+php artisan make:model Models/BlogPost -m
+
+    Версия Laravel
+php artisan -V
+
+    Создание бд и таблиц из моделей
+php artisan migrate
+
+--------------------
+5.
+    Создание пустой схемы (базы данных) `poligon` в Workbench.
+CREATE SCHEMA `poligon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+    Вручную подготавливаются файлы миграции (для таблиц) в database/migration/ и команда:
+php artisan migrate
+
+--------------------
+6. 
+    Заполнение базы данных тестовыми данными: 
+    с помощью сидов (seed) и фабрик
+  
+    Создание сидов
+php artisan make:seeder UsersTableSeeder  // это имя класса, оно же будет именем файла в database/seeds
+php artisan make:seeder BlogCategoriesTableSeeder
+                        // посты (не категории) будут созданы с помощью фабрики
+  
+    Запуск сидов
+php artisan db:seed
+    Запускает все сиды.
+    Запускает DatabaseSeeder::run(),
+    в котором должны быть прописаны сидеры и факториз,
+    при этом файлы (классы) сидеров в этой же папке должны быть заполнены.
+	
+php artisan db:seed --class=UsersTableSeeder
+    Запускает конкретный сид.
+php artisan migrate:refresh --seed
+    Откатывает базу данных к нулю, создаёт таблицы и заполняет заново всеми сидами.
+
+https://laravel.com/docs/8.x/helpers
+\vendor\laravel\framework\src\Illuminate\Support\helpers.php
+\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php
+    Помощь по встроенным функциям Laravel
+
+--------------------
+8.
+
+    Создание контроллера, с пустыми рест-функциями благодаря --resource (контроллер ресурсов)
+php artisan make:controller RestTestController --resource 
+
+    В роутах routes/web.php создаются маршруты для этого контроллера
+    (в фигурных скобках в столбце URI обозначается место для id-ишника)
+
+    Список всех существующих маршрутов
+php artisan route:list
+    создать список в отдельном файле в текущей папке
+php artisan route:list > routes.txt
+
+--------------------
+9.
+    Контроллеры приложения
+
+    Базовый (родительский) контроллер блога (на всякий случай)   
+    "Blog/" создаст подпапку Blog в app/Http/Controllers
+php artisan make:controller Blog/BaseController
+     Для "родительности" в нём допишем abstract
+    и в других контроллерах в Blog/ перепеписываем по умолчанию extends Controller
+    на extends BaseController
+
+    Контроллер статей блога
+php artisan make:controller Blog/PostController --resource
+
+--------------------
+11.
+    Аутентификация 
+    https://laravel.com/docs/5.7/authentication
+
+    Создание базовых файлов
+php artisan make:auth
+
+    Запуск миграции
+php artisan migrate
+
+    Проверка
+http://poligon.local/register
+
+
+    Как подключается контент в blade-файлах
+
+    Комментарии <!-- --> в  blade-файлах сломают приложение
+    {{-- правильный комментарий в blade-файлах --}}
+
+    В \resources\views\layouts\app.blade.php   
+    в тегах контента 
+        <main class="py-4">
+            @yield('content')
+        </main>
+    будет подключаться будущий контент, он
+    в других blade-файлах подключается так
+            @extends('layouts.app')
+            @section('content')
+                <div> ... </div>
+            @endsection            
+
+    функции 
+    @foreach ... @endforeach 
+    @if ... @endif
+    являются blade-функциями
+
+    такая строчка
+        @php /** @var \App\Models\BlogCategory $item */ @endphp
+    создаётся для phpstorm, чтобы $item стала кликабельной
+    и вела к ее определению в проекте.
+
+
+
+ --------------------
+12.
+
+    Создание контроллера,
+    будет создана подпапка Admin/ в ней контроллер
+php artisan make:controller Blog/Admin/CategoryController --resource
+
+    Создание маршрутов вручную в файле в web.php
+Route::resource('categories', 'CategoryController')
+  ->only($methods)
+  ->names('blog.admin.categories');
+
+ --------------------
+14.
+    Пагинация    
+
+    Заполняются (вручную) пустые методы в CategoryController,
+    файлы view и папки под них содаются вручную в resources/views/ .
+    Согласно маршрутам вот такой вызов /admin/blog/categories/ .
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+	
