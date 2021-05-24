@@ -92,10 +92,49 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)  // request и id приходит с формы редактирования
+    public function update(Request $request, $id)  
+                // request и id приходит с формы редактирования.
+                // $request - это объект Request'a, работает с входящими данными.
+                // $id ($name и т.п.) без указания, чей id, обозначает отношение к текущему контроллеру,
+                // т.е. к категории
     {
-        dd(__METHOD__, $request->all(), $id);
+        // проверка
+        //dd(__METHOD__, $request->all(), $id);       
+        //$id = 102102102;
+
+        $item = BlogCategory::find($id); // find вернёт элемент или null
+
+        // можно подставить выше несуществующий $id = 102102102; 
+        // и запустить для проверки получения ошибки
+        // или вывести dd($item) для проверки получения null
+
+        if(empty($item)){               // если empty, в т.ч. null,
+            return back()               // back (из хелперов) редиректит на шаг назад (назад по url)
+                ->withErrors(['msg' => "Запись id=[{$id}]не найдена"]) // сохраняет ошибку в сессию и выводит её
+                ->withInput();          // возвращает на место уже заполненные данные с input полей,
+                ;                        // это _old_input в дебагбаре, в Session
+        }
+
+        $data = $request->all();  // массив всех данных, полученных реквестом
+                                  // можно использовать $request->input();
+        $result = $item
+            ->fill($data) // перезаписывает свойства объекта $item
+            ->save();     // cохраняет свойства в БД, вернёт true/false
+
+        // следует реакция на сохранение: goodway/badway
+        if ($result){
+            return redirect() // redirect из хелперов
+                ->route('blog.admin.categories.edit', $item->id)
+                ->with(['success'=> 'Успешно сохранено']);    // уходит в сессию
+        } else {
+            return back()
+                ->withErrors(['msg' => "Ошибка сохранения"])  // уходит в сессию
+                ->withInput();
+        }
+
     }
+
+    
 
     /**
      * Remove the specified resource from storage.

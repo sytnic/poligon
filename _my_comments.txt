@@ -89,10 +89,12 @@ php artisan db:seed --class=UsersTableSeeder
 php artisan migrate:refresh --seed
     Откатывает базу данных к нулю, создаёт таблицы и заполняет заново всеми сидами.
 
+
+    Помощь по встроенным функциям Laravel (хелперы)
 https://laravel.com/docs/8.x/helpers
 \vendor\laravel\framework\src\Illuminate\Support\helpers.php
 \vendor\laravel\framework\src\Illuminate\Foundation\helpers.php
-    Помощь по встроенным функциям Laravel
+    
 
 --------------------
 8.
@@ -185,6 +187,9 @@ Route::resource('categories', 'CategoryController')
     Заполняются (вручную) пустые методы в CategoryController,
     файлы view и папки под них содаются вручную в resources/views/ .
     Согласно маршрутам вот такой вызов /admin/blog/categories/ .
+
+
+
 
 
 
