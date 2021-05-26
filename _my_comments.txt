@@ -111,8 +111,7 @@ php artisan route:list
 php artisan route:list > routes.txt
 
 --------------------
-9.
-    Контроллеры приложения
+9. Контроллеры приложения
 
     Базовый (родительский) контроллер блога (на всякий случай)   
     "Blog/" создаст подпапку Blog в app/Http/Controllers
@@ -125,8 +124,8 @@ php artisan make:controller Blog/BaseController
 php artisan make:controller Blog/PostController --resource
 
 --------------------
-11.
-    Аутентификация 
+11. Аутентификация 
+    
     https://laravel.com/docs/5.7/authentication
 
     Создание базовых файлов
@@ -180,13 +179,21 @@ Route::resource('categories', 'CategoryController')
   ->only($methods)
   ->names('blog.admin.categories');
 
- --------------------
-14.
-    Пагинация    
+---------------------
+14. Пагинация    
 
     Заполняются (вручную) пустые методы в CategoryController,
     файлы view и папки под них содаются вручную в resources/views/ .
     Согласно маршрутам вот такой вызов /admin/blog/categories/ .
+
+---------------------
+22. Валидация
+
+    Создание своего класса запросов, расширяющих FormRequest:
+php artisan make:request BlogCategoryObjectRequest
+    попадает в app/Http/Requests, к-рая будет создана
+
+
 
 
 
