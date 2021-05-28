@@ -193,6 +193,12 @@ Route::resource('categories', 'CategoryController')
 php artisan make:request BlogCategoryObjectRequest
     попадает в app/Http/Requests, к-рая будет создана
 
+---------------------
+23. 
+
+php artisan make:request BlogCategoryCreateRequest
+
+Повторяемую логику в методах Контроллеров можно вынести в Обсервер.
 
 
 
@@ -203,29 +209,3 @@ php artisan make:request BlogCategoryObjectRequest
 
 
 
-
-
-
-            
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-	

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Blog\Admin;
 
 use App\Http\Requests\BlogCategoryObjectRequest;
+use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Blog\Admin\BaseController;
@@ -14,6 +15,7 @@ class CategoryController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
+    // Срабатывает при переходе на admin/blog/categories
     public function index()
     {
         // проверка
@@ -32,10 +34,19 @@ class CategoryController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
+    // Срабатывает при нажатии кнопки "Добавить"
     public function create()
     {
-        // проверка
-        dd(__METHOD__);
+        // проверка c die
+        //dd(__METHOD__);
+
+        $item = new BlogCategory(); // создали пустой объект модели BlogCategory
+        $categoryList = BlogCategory::all(); // получили весь список от модели BlogCategory
+
+        // вью
+        // по сути, перечисление пути через точку в папке resources/views
+        return view('blog.admin.categories.edit',
+            compact('item','categoryList'));
     }
 
     /**
@@ -44,9 +55,54 @@ class CategoryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    // Срабатывает при нажатии кнопки "Сохранить" при добавлении новой категории,
+    // поведение завиcит от @if ($item->exists) в edit.blade.php
+
+    // Используем BlogCategoryCreateRequest ,
+    // вместо Request по умолчанию
+    
+    public function store(BlogCategoryCreateRequest $request)
     {
-        //
+        $data = $request->input(); // данные, пришедшие с формы, если есть
+
+        // если slug (Идентификатор) из формы пустой, то внутренней функцией str_slug
+        // создаём красивый url из title.
+        // Повторяемую логику в методах Контроллеров можно вынести в Обсервер.   
+        if(empty($data['slug'])){
+            $data['slug'] = str_slug($data['title']);
+        }
+        // посмотреть массив $data
+        // dd($data);
+
+        /*
+        // Записать в БД. Способ 1.
+        // Эта строчка вызовет в construct'e Model заполнение атрибутов,
+        // назначенные в Модели BlogCategory в protected $fillable
+        $item = new BlogCategory($data);
+        // атрибуты можно перезаполнить вручную:
+        $item->title = 'Тысяча восемьсот тридцать четыре';
+        // проверка, +exists: false означает отсутствие в базе данных
+        //dd($item);
+        $item->save(); // save() записывает в БД и возвращает true или false
+        */
+
+        // Записать в БД. Способ 2.
+        // Создаёт пустой объект BlogCategory, заполняет данными ($data), 
+        // получаем объект $item, create в себе выполняет save() (записывает в БД)
+        $item = (new BlogCategory())->create($data);
+        // vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php
+
+        // Можно if записать так:
+        // if($item->exists)
+        // if($item instanceof BlogCategory) .
+        // Редиректы после сохранения .
+        if($item) {
+            return redirect()->route('blog.admin.categories.edit', [$item->id])
+                ->with((['success' => 'Успешно сохранено']));
+        } else {
+            return back()->withErrors(['msg'=> 'Ошибка сохранения'])
+                ->withInput(); // со старыми заполненными inputam'и
+        }
     }
 
     /**
@@ -69,6 +125,7 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // Срабатывает при клике по любой Категории
     public function edit($id)
     {
         // проверка
@@ -93,6 +150,9 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // Срабатывает при нажатии кнопки "Сохранить" при обновлении категории,
+    // поведение завиcит от @if ($item->exists) в edit.blade.php
+
     // public function update(Request $request, $id)  
                 // request и id приходит с формы редактирования.
                 // $request - это объект Request'a, работает с входящими данными.
@@ -168,9 +228,20 @@ class CategoryController extends BaseController
 
         $data = $request->all();  // массив всех данных, полученных реквестом
                                   // можно использовать $request->input();
+        
+        // если slug (Идентификатор) из формы пустой, то внутренней функцией str_slug
+        // создаём красивый url из title.
+        // Повторяемую логику в методах Контроллеров можно вынести в Обсервер.     
+        if(empty($data['slug'])){
+            $data['slug'] = str_slug($data['title']);
+        }
+        
         $result = $item
             ->fill($data) // перезаписывает свойства объекта $item
             ->save();     // cохраняет свойства в БД, вернёт true/false
+        // Равнозначно делать так:
+        // $result = $item->update($data);
+        // описан в Model
 
         // следует реакция на сохранение: goodway/badway
         if ($result){

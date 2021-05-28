@@ -2,13 +2,28 @@
 
 @section('content')
     @php /** $var \App\Models\BlogCategory $item */ @endphp
-   
-    <form method = "POST" action = "{{ route('blog.admin.categories.update', $item->id) }}" >
-    
-        @method('PATCH')    {{--    метод отправки формы PATCH, 
-                                    в таблице routes задаётся PUT или PATCH,
-                                    использование POST может выдать 404 ошибку --}}
-        @csrf               {{--    защита формы от атак    --}}        
+
+
+    {{--    в зависимости от целей 
+            (форма редактирования (под update) или форма создания новой категории (под store)) 
+            верхушка кода у формы меняется --}} 
+
+    {{-- $item подхватывается из методов CategoryController ,
+         в случае store он с пустыми атрибутами, 
+         создан как пустой объект в контроллере
+    --}}
+
+    @if ($item->exists)
+        <form method = "POST" action = "{{ route('blog.admin.categories.update', $item->id) }}" >
+            @method('PATCH')
+    @else
+        <form method = "POST" action = "{{ route('blog.admin.categories.store') }}">
+    @endif    
+            {{--    PATCH - это метод отправки формы, 
+                    в таблице routes задаётся PUT или PATCH,
+                    использование POST может выдать 404 ошибку --}}         
+        
+        @csrf       {{--    защита формы от атак    --}}        
 
         <div class="container">
             {{--  отображение в случае ошибки сохранения формы в БД.
