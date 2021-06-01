@@ -7,6 +7,7 @@ use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Blog\Admin\BaseController;
+use App\Repositories\BlogCategoryRepository;
 
 class CategoryController extends BaseController
 {
@@ -123,22 +124,39 @@ class CategoryController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
+     * 
      * @return \Illuminate\Http\Response
      */
     // Срабатывает при клике по любой Категории
-    public function edit($id)
+    public function edit($id, BlogCategoryRepository $categoryRepository)
     {
-        // проверка
-        //dd(__METHOD__);
-
+        /* при одиночном параметре id
+        
         //$item[] = BlogCategory::find($id);  // return this element or null        
         //$item[] = BlogCategory::where('id', '=', $id)->first(); // return this element
         // dd(collect($item)->pluck('id'));  // покажет id для каждого item
 
-        $item = BlogCategory::findOrFail($id); // return this element or 404
-       
+        $item = BlogCategory::findOrFail($id); // return this element or 404       
         $categoryList = BlogCategory::all();
 
+        */
+
+        /* при параметрах id и Репозитория*/
+
+        // другие способы создания объекта класса репозитория
+        // вместо указания в параметре:
+        //$categoryRepository = new BlogCategoryRepository();        
+        //$categoryRepository = app(BlogCategoryRepository::class); // Равнозначно указанию в параметрах функции
+
+        // getEdit() и getForComboBox() (выпадающий список категорий)
+        // выгружает только те поля из БД, к-рые необходимы сейчас
+        $item = $categoryRepository->getEdit($id);
+        if(empty($item)) {
+            abort(404);
+        }
+        $categoryList = $categoryRepository->getForComboBox();
+
+        
         return view('blog.admin.categories.edit',
             compact('item', 'categoryList'));
     }

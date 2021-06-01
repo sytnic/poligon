@@ -200,6 +200,20 @@ php artisan make:request BlogCategoryCreateRequest
 
 Повторяемую логику в методах Контроллеров можно вынести в Обсервер.
 
+---------------------
+26. Создание репозитория (хранилища) для категорий
+
+    Создаётся вручную папка app/Repositories .
+    В ней два файла. Один из них - ядро. От него наследуются другие в этой папке:   
+    CoreRepository.php, BlogcategoryRepository.php .
+
+    Можно попробовать сделать командами, но велика вероятность ошибок,
+    т.к. "Репозиторий не является частью фреймворка (как контроллеры или модели)" .
+composer require jason-guru/laravel-make-repository --dev
+php artisan make:repository BlogcategoryRepository 
+
+
+
 
 
 
