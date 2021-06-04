@@ -17,9 +17,9 @@ Route::get('/', function () {
 
 // чтобы не указывать отдельно get, post , delete.. для маршрутов, 
 //   можно указать одной строкой:
-//   указываются uri, controller, имя маршрута names
+//   указываются ресурс (uri, controller), имя маршрута names
 //Route::resource('rest', 'RestTestController')->names('restTest');
-// ->names('restTest'); имя маршрута можно не задавать
+// имя маршрута names('restTest'); можно не задавать
 
 Auth::routes();
 // регистрация новых маршрутов авторизации

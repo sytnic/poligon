@@ -9,8 +9,27 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Blog\Admin\BaseController;
 use App\Repositories\BlogCategoryRepository;
 
+/**
+ * Управление категориями блога
+ *
+ * @package App\Http\Controllers\BlogAdmin
+ */
 class CategoryController extends BaseController
 {
+    /**
+     * @var BlogCategoryRepository
+     * 
+    */
+    private $blogCategoryRepository;
+
+    public function __construct()
+    {
+        parent::__construct(); // construct в родительском BaseController
+
+        // создание экземпляра класса (объекта)
+        $this->blogCategoryRepository = app(BlogCategoryRepository::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,14 +38,18 @@ class CategoryController extends BaseController
     // Срабатывает при переходе на admin/blog/categories
     public function index()
     {
-        // проверка
-        //dd(__METHOD__);
-
+    /* без репозитория, вызов всех полей из бд  
         //$d2 = BlogCategory::all();
-        $paginator = BlogCategory::paginate(5);
+        $paginator = BlogCategory::paginate(5);        
         //dd($d2, $paginator); //информация о переменных
+    */
 
+    /* для репозитория, вызов определенных полей из бд */
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
+ 
         return view('blog.admin.categories.index', compact('paginator'));
+    
+
 
     }
 
@@ -42,7 +65,16 @@ class CategoryController extends BaseController
         //dd(__METHOD__);
 
         $item = new BlogCategory(); // создали пустой объект модели BlogCategory
-        $categoryList = BlogCategory::all(); // получили весь список от модели BlogCategory
+        /* без использования репозитория: 
+        // получим весь список со всеми полями от модели BlogCategory
+        $categoryList = BlogCategory::all(); 
+        */
+
+        /* с использованием репозитория: */
+        // получим список с определенными полями
+        $categoryList
+            = $this->blogCategoryRepository->getForComboBox();
+        
 
         // вью
         // по сути, перечисление пути через точку в папке resources/views
@@ -141,7 +173,8 @@ class CategoryController extends BaseController
 
         */
 
-        /* при параметрах id и Репозитория*/
+        /* при параметрах id и Репозитория
+           edit($id, BlogCategoryRepository $categoryRepository)  
 
         // другие способы создания объекта класса репозитория
         // вместо указания в параметре:
@@ -155,7 +188,17 @@ class CategoryController extends BaseController
             abort(404);
         }
         $categoryList = $categoryRepository->getForComboBox();
+        
+        */
 
+        /* при одиночном параметре id и использовании Репозитория */
+
+        $item = $this->blogCategoryRepository->getEdit($id);
+        if(empty($item)) {
+            abort(404);
+        }
+
+        $categoryList = $this->blogCategoryRepository->getForComboBox();
         
         return view('blog.admin.categories.edit',
             compact('item', 'categoryList'));

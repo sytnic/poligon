@@ -180,7 +180,7 @@ Route::resource('categories', 'CategoryController')
   ->names('blog.admin.categories');
 
 ---------------------
-14. Пагинация    
+14. 
 
     Заполняются (вручную) пустые методы в CategoryController,
     файлы view и папки под них содаются вручную в resources/views/ .

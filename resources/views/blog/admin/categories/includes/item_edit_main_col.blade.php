@@ -41,9 +41,14 @@
                                     @foreach($categoryList as $categoryOption)
                                         <option value="{{ $categoryOption->id }}"
                                             @if($categoryOption->id == $item->parent_id) selected @endif >                                            
-                                            {{ $categoryOption->id }}. {{ $categoryOption->title }}
+                                            {{ $categoryOption->id_title }}
+                                            {{--  для работы с репозиторием --}}
+                                            
+                                            {{-- $categoryOption->id }}. {{ $categoryOption->title --}}
+                                            {{--  для работы без репозитория --}}
 
-                                            {{-- $categoryOption->id_title --}}
+                                            {{-- Описание: --}}
+                                            {{-- $categoryList берётся из CategoryController --}}
                                             {{-- @if подставляет родительскую категорию в форму --}}
                                         </option>
                                     @endforeach
