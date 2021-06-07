@@ -15,6 +15,7 @@ _development_laravel_study_project.txt
 _no_laravel_files.txt
 /.vagrant
 /_to_delete
+/_dumps
 /storage
 /bootstrap/cache
 

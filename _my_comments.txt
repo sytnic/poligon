@@ -85,10 +85,15 @@ php artisan db:seed
     при этом файлы (классы) сидеров в этой же папке должны быть заполнены.
 	
 php artisan db:seed --class=UsersTableSeeder
+php artisan db:seed --class=BlogCategoriesTableSeeder
     Запускает конкретный сид.
+
 php artisan migrate:refresh --seed
     Откатывает базу данных к нулю, создаёт таблицы и заполняет заново всеми сидами.
 
+    Для изменения структуры базы данных (напр., связи айдишников и тайтлов) понадобится
+php artisan migrate:refresh --seed ,
+    а не php artisan db:seed --class=BlogCategoriesTableSeeder   
 
     Помощь по встроенным функциям Laravel (хелперы)
 https://laravel.com/docs/8.x/helpers
@@ -210,7 +215,30 @@ php artisan make:request BlogCategoryCreateRequest
     Можно попробовать сделать командами, но велика вероятность ошибок,
     т.к. "Репозиторий не является частью фреймворка (как контроллеры или модели)" .
 composer require jason-guru/laravel-make-repository --dev
-php artisan make:repository BlogcategoryRepository 
+php artisan make:repository BlogcategoryRepository
+
+---------------------
+32. Управление статьями блога, подготовка
+
+    Будет выводится по url: /admin/blog/posts
+
+    Создаётся контроллер для управления статьями блога,
+    -r означает "с ресурсными методами" (как --resource),
+    правильно писать с прямым слэшем (под Линуксом), иначе 
+    создаст в общей папке контроллеров и соединит всю запись в имя файла
+
+php artisan make:controller Blog/Admin/PostController -r
+
+    Для этого контроллера создаются вручную
+    репозиторий - app\Repositories\BlogPostRepository.php
+    view - resources\views\blog\admin\posts\index.blade.php
+    роуты - routes\web.php
+
+    Должны быть правильно прописаны все use, чтобы не было ошибок
+
+---------------------
+
+
 
 
 

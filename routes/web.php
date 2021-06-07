@@ -44,6 +44,7 @@ $groupData = [
     'prefix' => 'admin/blog',
 ];
 Route::group($groupData, function () {
+
     //BlogCategory
     // только эти методы будут задействованы, несмотря на 
     // создание ресурсом в контроллере всех методов по умолчанию (+ show, + destroy)
@@ -51,4 +52,10 @@ Route::group($groupData, function () {
     Route::resource('categories', 'CategoryController')
         ->only($methods)
         ->names('blog.admin.categories');
+
+     //BlogPosts
+     // использовать все методы, кроме show
+     Route:: resource('posts', 'PostController')
+     ->except(['show'])
+     ->names('blog.admin.posts');    
 });
