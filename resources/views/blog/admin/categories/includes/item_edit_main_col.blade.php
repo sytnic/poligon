@@ -41,9 +41,14 @@
                                     @foreach($categoryList as $categoryOption)
                                         <option value="{{ $categoryOption->id }}"
                                             @if($categoryOption->id == $item->parent_id) selected @endif >                                            
-                                            {{ $categoryOption->id }}. {{ $categoryOption->title }}
+                                            {{ $categoryOption->id_title }}
+                                            {{--  для работы с репозиторием --}}
+                                            
+                                            {{-- $categoryOption->id }}. {{ $categoryOption->title --}}
+                                            {{--  для работы без репозитория --}}
 
-                                            {{-- $categoryOption->id_title --}}
+                                            {{-- Описание: --}}
+                                            {{-- $categoryList берётся из CategoryController --}}
                                             {{-- @if подставляет родительскую категорию в форму --}}
                                         </option>
                                     @endforeach
@@ -54,11 +59,15 @@
                                 <textarea   name="description" 
                                             id="description" 
                                             class="form-control" 
-                                            rows="3">
-                                            {{ $item->description }}
-
-                                            {{-- old('description', $item->description) --}}
+                                            rows="3">{{old('description', $item->description) }}
                                 </textarea>
+                                            {{-- можно использовать просто $item->description --}}
+                                            {{-- old('description') вернёт уже заполненные данные обратно, 
+                                            если форма будет возвращена с ошибкой;
+                                            работает в связке с return back()->withInput() в соответствующем контроллере,
+                                            иначе 
+                                            выведет данные из БД с помощью $item->description .
+                                            old() определён в хелперах . --}}
                             </div>
                         </div>
                 </div>
