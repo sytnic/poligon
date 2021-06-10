@@ -34,10 +34,31 @@
                                     /** @var \App\Models\BlogPost $post           -- это для подсказок в PHPstorm --   */
                                 @endphp
                                 <tr @if(!$post->is_published) style = "background-color: #ccc; "@endif>
-                                                                                {{-- неопубликованная запись будет серой --}}
+                                                      {{-- неопубликованная запись будет серой --}}
+                                                                        
+                                    {{-- Без отношений Eloquent : 
                                     <td>{{ $post->id }}</td>
-                                    <td>{{ $post->user_id }}</td>               {{-- $post->user->name --}} 
-                                    <td>{{ $post->category_id }}</td>           {{-- $post->category->title --}}
+                                    <td>{{ $post->user_id }}</td>
+                                    <td>{{ $post->category_id }}</td>
+                                    --}}
+
+                                    {{-- Для отношений Eloquent : --}}
+                                    <td>{{ $post->id }}</td>                                                                                         
+                                    <td>{{ $post->user->name }} </td>           
+                                    <td>{{ $post->category->title }}</td> 
+                                    
+
+                                    {{-- Без отношений Eloquent мы получаем только _id из одной таблицы,
+                                         с отношениями Eloquent мы получаем реляционно связанные данные из других таблиц. 
+                                    
+                                    Динамические свойства Eloquent позволяют получить доступ к методам отношений,
+                                    как если бы они были свойствами, определенными в модели:
+                                      user     в $post->user->name      - используется как свойство, является методом $post'а,
+                                          name принадлежит User'у как его свойство .
+                                      category в $post->category->title - используется как свойство, является методом $post'а,
+                                          title принадлежит category как его свойство .
+                                      $post является объектом класса BlogPost (модели).
+                                    --}}
                                     <td>
                                         <a href="{{ route('blog.admin.posts.edit', $post->id )}}">{{ $post->title }}</a>
                                     </td>
