@@ -13,7 +13,9 @@ sudo chmod 777 -R storage && sudo chmod 777 -R bootstrap/cache
     Vagrant и VirtualBox жестко привязывают права к общей с Windows папке и ее вложенностям. 
 Поменять права вряд ли удастся.
 
-    При ошибке установки  barryvdh/laravel-debugbar на Laravel 5.7.29 встала версия 3,0 
+    При ошибке установки barryvdh/laravel-debugbar на Laravel 5.7.29 командой
+composer require barryvdh/laravel-debugbar --dev    
+     встала версия 3,0 
 composer require barryvdh/laravel-debugbar:~3.0 --dev
 
 ---
@@ -30,41 +32,38 @@ APP_DEBUG=false
 --------------------
 3.
 ---
-    Для Maria DB и др. нужно будет прописать следующие строки
-    в AppServiceProvider,
-    описание здесь: Index Lengths & MySQL / MariaDB
+    Для MySQL/MariaDB нужно будет прописать следующие строки в app\Providers\AppServiceProvider.php,
+    описание здесь: 
+    Index Lengths & MySQL / MariaDB
     https://laravel.com/docs/5.7/migrations#indexes :
 
+...
   use Illuminate\Support\Facades\Schema;
+...
   public function boot()
 {
     Schema::defaultStringLength(191);
 }
 ---
 
-    Создание пустой схемы (базы данных) `poligon` в Workbench.
-CREATE SCHEMA `poligon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-    Создание моделей в папкке app/Models c соответсвующими им миграциями
-php artisan make:model Models/BlogCategory -m
-    т.е. автоматически создастся Модель, папка Models и 
-    миграция в database/migration/ (создающая структуру таблицы),
-    которую можно внутри донастроить вручную.
-
-php artisan make:model Models/BlogPost -m
-
     Версия Laravel
 php artisan -V
-
-    Создание бд и таблиц из моделей
-php artisan migrate
 
 --------------------
 5.
     Создание пустой схемы (базы данных) `poligon` в Workbench.
 CREATE SCHEMA `poligon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-    Вручную подготавливаются файлы миграции (для таблиц) в database/migration/ и команда:
+    Создание моделей в папке app/Models c соответсвующими им миграциями
+php artisan make:model Models/BlogCategory -m
+    т.е. автоматически создастся Модель, папка Models и 
+    миграция в database/migrations/ (создающая структуру таблицы),
+    которую можно внутри донастроить вручную.
+
+php artisan make:model Models/BlogPost -m
+
+    Создание БД и таблиц из моделей
+    Вручную подготавливаются файлы миграции (для таблиц) в database/migration/ , далее команда:
 php artisan migrate
 
 --------------------
@@ -76,20 +75,22 @@ php artisan migrate
 php artisan make:seeder UsersTableSeeder  // это имя класса, оно же будет именем файла в database/seeds
 php artisan make:seeder BlogCategoriesTableSeeder
                         // посты (не категории) будут созданы с помощью фабрики
-  
-    Запуск сидов
+
+    Сиды создаются пустыми и заполняются вручную. Фабрики создаются вручную.
+
+    Запуск сидов и фабрик
 php artisan db:seed
-    Запускает все сиды.
-    Запускает DatabaseSeeder::run(),
-    в котором должны быть прописаны сидеры и факториз,
-    при этом файлы (классы) сидеров в этой же папке должны быть заполнены.
+    Запускает database\seeds\DatabaseSeeder::run(),
+    в котором должны быть прописаны "ссылки" на все сидеры и фабрики,
+    при этом файлы (классы) сидеров и фабрик в папке database\ должны быть заполнены.
 	
+    Запускает конкретный сид.
 php artisan db:seed --class=UsersTableSeeder
 php artisan db:seed --class=BlogCategoriesTableSeeder
-    Запускает конкретный сид.
-
-php artisan migrate:refresh --seed
+    
     Откатывает базу данных к нулю, создаёт таблицы и заполняет заново всеми сидами.
+php artisan migrate:refresh --seed
+    
 
     Для изменения структуры базы данных (напр., связи айдишников и тайтлов) понадобится
 php artisan migrate:refresh --seed ,
@@ -107,12 +108,13 @@ https://laravel.com/docs/8.x/helpers
     Создание контроллера, с пустыми рест-функциями благодаря --resource (контроллер ресурсов)
 php artisan make:controller RestTestController --resource 
 
-    В роутах routes/web.php создаются маршруты для этого контроллера
-    (в фигурных скобках в столбце URI обозначается место для id-ишника)
-
+    В роутах routes/web.php вручную создаются маршруты для этого контроллера
+    
     Список всех существующих маршрутов
 php artisan route:list
-    создать список в отдельном файле в текущей папке
+    (в фигурных скобках в столбце URI обозначается место для id-ишника)
+
+    Создать список маршрутов в отдельном файле в текущей папке
 php artisan route:list > routes.txt
 
 --------------------
